@@ -25,6 +25,25 @@ async function runSetup() {
             await pool.query(queryStr);
         }
         
+        // Seeder: Insere um site de exemplo caso o banco esteja vazio
+        const countRes = await pool.query('SELECT COUNT(*) as count FROM sites');
+        const count = parseInt(countRes.rows[0].count || countRes.rows[0]['COUNT(*)'] || 0);
+        if (count === 0) {
+            await pool.query(
+                `INSERT INTO sites (id, nome, dominio, meta_pixel_id, meta_pixel_token, test_event_code)
+                 VALUES ($1, $2, $3, $4, $5, $6)`,
+                [
+                    'exemplo-site-uuid',
+                    'Site Exemplo do Willian',
+                    'site-do-willian.com',
+                    '123456789012345',
+                    'EAAG_exemplo_token_capi',
+                    'TEST12345'
+                ]
+            );
+            console.log('🌱 Seeding: Site de exemplo cadastrado no banco de dados!');
+        }
+        
         console.log('✅ Banco de dados configurado com sucesso!');
     } catch (err) {
         console.error('❌ Falha na inicialização do banco de dados:', err.message);
