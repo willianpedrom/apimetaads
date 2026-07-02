@@ -38,10 +38,25 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Ocorreu um erro interno no servidor.' });
 });
 
+const db = require('./db/pool');
+
 // Inicializa banco de dados e inicia o servidor
 async function startServer() {
     console.log('🚀 Inicializando apimetaads...');
     await runSetup();
+    
+    // Auto-prune: Limpa logs com mais de 30 dias na inicialização
+    try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const pad = (n) => String(n).padStart(2, '0');
+        const dbDateString = `${thirtyDaysAgo.getUTCFullYear()}-${pad(thirtyDaysAgo.getUTCMonth() + 1)}-${pad(thirtyDaysAgo.getUTCDate())} ${pad(thirtyDaysAgo.getUTCHours())}:${pad(thirtyDaysAgo.getUTCMinutes())}:${pad(thirtyDaysAgo.getUTCSeconds())}`;
+        
+        const pruneRes = await db.query('DELETE FROM events_log WHERE criado_em < $1', [dbDateString]);
+        console.log(`🧹 Auto-prune: ${pruneRes.rowCount || 0} logs antigos apagados.`);
+    } catch (pruneErr) {
+        console.error('⚠️ Falha ao executar auto-prune:', pruneErr.message);
+    }
     
     app.listen(PORT, () => {
         console.log(`📡 Servidor rodando na porta ${PORT} no modo ${process.env.NODE_ENV || 'development'}`);

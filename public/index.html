@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaAds Tracker - Painel de Controle</title>
-    <!-- Google Fonts: Inter -->
+    <title>MetaAds Tracker – Dashboard Premium</title>
+    <!-- Google Fonts: Inter & Outfit para Cabeçalhos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: #151d30;
-            --border-color: #24324f;
-            --primary: #7c3aed;
-            --primary-hover: #6d28d9;
-            --primary-light: rgba(124, 58, 237, 0.15);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --bg-color: #070b13;
+            --card-bg: rgba(17, 24, 39, 0.45);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --glass-bg: rgba(13, 20, 35, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --primary-glow: rgba(139, 92, 246, 0.25);
+            --accent: #d946ef;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
             --success: #10b981;
-            --success-light: rgba(16, 185, 129, 0.15);
-            --danger: #ef4444;
-            --danger-light: rgba(239, 68, 68, 0.15);
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --danger: #f43f5e;
+            --danger-glow: rgba(244, 63, 94, 0.2);
+            --warning: #f59e0b;
         }
 
         * {
@@ -34,12 +38,33 @@
 
         body {
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(217, 70, 239, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
             padding: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
+        }
+
+        /* Scrollbar customizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Header Style */
@@ -47,19 +72,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo-area h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #a78bfa 0%, var(--primary) 100%);
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #c084fc 0%, #8b5cf6 50%, #d946ef 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .logo-area p {
@@ -73,12 +100,13 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background-color: var(--success-light);
+            background: rgba(16, 185, 129, 0.08);
+            backdrop-filter: blur(10px);
             color: var(--success);
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.15);
         }
 
         .status-dot {
@@ -86,40 +114,93 @@
             height: 8px;
             background-color: var(--success);
             border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        /* Grid Layout */
+        /* Dashboard Overview Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .stat-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .stat-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .stat-sub.positive {
+            color: var(--success);
+        }
+
+        /* Dashboard Content Layout */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            grid-template-columns: 4fr 5fr;
+            gap: 1.5rem;
             flex-grow: 1;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1100px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Card Elements */
+        /* Card Frame */
         .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            max-height: calc(100vh - 12rem);
+            gap: 1.2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            max-height: calc(100vh - 18rem);
             overflow-y: auto;
         }
 
@@ -129,132 +210,248 @@
             align-items: center;
             position: sticky;
             top: 0;
-            background-color: var(--card-bg);
+            background: inherit;
+            margin-top: -0.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             z-index: 10;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(36, 50, 79, 0.4);
         }
 
         .card-title {
+            font-family: 'Outfit', sans-serif;
             font-size: 1.2rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
-        /* Buttons */
+        /* SVG Chart styling */
+        .chart-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.03);
+            height: 160px;
+            position: relative;
+        }
+
+        .chart-dot {
+            cursor: pointer;
+            transition: r 0.2s ease, fill 0.2s ease;
+        }
+        .chart-dot:hover {
+            r: 6;
+            fill: var(--accent);
+        }
+
+        /* Filters and Search Fields */
+        .filters-row {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-container {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .input-filter {
+            background: rgba(8, 12, 20, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            outline: none;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .input-filter:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .search-container input {
+            width: 100%;
+            padding-left: 2rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* Buttons styling */
         .btn {
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             border: none;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            gap: 0.4rem;
         }
 
         .btn-primary {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
             color: #fff;
+            box-shadow: 0 4px 12px var(--primary-glow);
         }
 
         .btn-primary:hover {
-            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px var(--primary-glow);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             color: var(--text-main);
         }
 
         .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .btn-danger {
-            background-color: var(--danger-light);
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.2);
             color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .btn-danger:hover {
-            background-color: var(--danger);
+            background: var(--danger);
             color: #fff;
+            box-shadow: 0 4px 12px var(--danger-glow);
+        }
+
+        .btn-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--success);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--success-glow);
         }
 
         .btn-sm {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.75rem;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.72rem;
+            border-radius: 6px;
         }
 
-        /* Site List Items */
+        /* Sites List */
         .site-item {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.1rem;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            background-color: rgba(11, 15, 25, 0.4);
-            transition: transform 0.2s, border-color 0.2s;
+            flex-direction: column;
+            gap: 0.8rem;
+            background: rgba(8, 12, 20, 0.3);
+            transition: all 0.25s ease;
         }
 
         .site-item:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
+            border-color: rgba(139, 92, 246, 0.25);
+            background: rgba(8, 12, 20, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .site-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         .site-info {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.3rem;
         }
 
         .site-name {
-            font-weight: 600;
-            font-size: 1.05rem;
+            font-weight: 700;
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
         .site-domain {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            background-color: rgba(255,255,255,0.05);
-            padding: 0.2rem 0.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.15rem 0.45rem;
             border-radius: 4px;
             width: fit-content;
+            border: 1px solid rgba(255,255,255,0.02);
         }
 
         .site-meta {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .site-meta code {
+            color: #d946ef;
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
         }
 
         .site-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            justify-content: flex-end;
+            border-top: 1px dashed rgba(255,255,255,0.04);
+            padding-top: 0.75rem;
         }
 
         /* Logs List */
         .logs-container {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.6rem;
         }
 
         .log-item {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.8rem;
-            font-size: 0.85rem;
-            background-color: rgba(11, 15, 25, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            background: rgba(8, 12, 20, 0.3);
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .log-item:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(8, 12, 20, 0.55);
         }
 
         .log-row-main {
@@ -265,61 +462,75 @@
         }
 
         .log-event-name {
-            font-weight: 600;
-            color: #a78bfa;
+            font-weight: 700;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
         .log-badge {
-            padding: 0.2rem 0.5rem;
+            padding: 0.15rem 0.45rem;
             border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .log-badge.success {
-            background-color: var(--success-light);
+            background-color: rgba(16, 185, 129, 0.1);
             color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .log-badge.failed {
-            background-color: var(--danger-light);
+            background-color: rgba(244, 63, 94, 0.1);
             color: var(--danger);
+            border: 1px solid rgba(244, 63, 94, 0.2);
         }
 
         .log-details {
-            border-top: 1px dashed var(--border-color);
-            padding-top: 0.5rem;
-            margin-top: 0.2rem;
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: var(--text-muted);
+            border-top: 1px dashed rgba(255, 255, 255, 0.05);
+            padding: 0.6rem;
+            margin-top: 0.3rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.72rem;
+            color: #a7f3d0;
             white-space: pre-wrap;
             display: none;
+            overflow-x: auto;
+            max-height: 200px;
+        }
+
+        .log-details.error-color {
+            color: #fecdd3;
         }
 
         .log-meta-info {
             display: flex;
             justify-content: space-between;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
         }
 
-        /* Modal Styles */
+        /* Modal Layout */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px);
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 100;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
         }
 
         .modal-overlay.active {
@@ -328,17 +539,20 @@
         }
 
         .modal {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 500px;
-            padding: 2rem;
+            background: #0d1322;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border-radius: 16px;
+            width: 92%;
+            max-width: 550px;
+            padding: 1.8rem;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            gap: 1.2rem;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-overlay.active .modal {
@@ -346,109 +560,237 @@
         }
 
         .modal-title {
+            font-family: 'Outfit', sans-serif;
             font-size: 1.3rem;
             font-weight: 700;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.8rem;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .form-label {
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--text-muted);
         }
 
         .form-input {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0.7rem;
+            background-color: rgba(8, 12, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 0.65rem 0.8rem;
             color: var(--text-main);
             outline: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: border-color 0.2s;
         }
 
         .form-input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 6px var(--primary-glow);
         }
 
         .modal-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 1rem;
         }
 
         .code-box {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1rem;
-            font-family: monospace;
-            font-size: 0.75rem;
+            background-color: rgba(8, 12, 20, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.72rem;
             overflow-x: auto;
-            color: #a78bfa;
+            color: #c084fc;
             white-space: pre;
-            margin-top: 0.5rem;
+            border-left: 3px solid var(--primary);
         }
 
         .empty-state {
             text-align: center;
             color: var(--text-muted);
-            padding: 3rem 1rem;
-            font-size: 0.95rem;
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
+            padding: 2.5rem 1rem;
+            font-size: 0.88rem;
+            border: 1.5px dashed rgba(255,255,255,0.06);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(13, 20, 35, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
     <header>
         <div class="logo-area">
-            <h1>MetaAds Portal</h1>
+            <h1>MetaAds Tracker</h1>
             <p>Gerenciador Multi-Site de Pixels & Conversions API (CAPI)</p>
         </div>
         <div class="status-badge">
             <span class="status-dot"></span>
-            API Online
+            CAPI Gateway Online
         </div>
     </header>
 
+    <!-- Overview Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-title">Sites Monitorados</span>
+            <span class="stat-value" id="stat-total-sites">-</span>
+            <span class="stat-sub" id="stat-active-sites">- ativos</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Entregas CAPI (Total)</span>
+            <span class="stat-value" id="stat-total-events">-</span>
+            <span class="stat-sub">Registros acumulados</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Taxa de Sucesso CAPI</span>
+            <span class="stat-value" id="stat-success-rate" style="color:var(--success)">-%</span>
+            <span class="stat-sub" id="stat-failed-events">0 falhas no histórico</span>
+        </div>
+        <!-- Gráfico na Grid de Stats -->
+        <div class="stat-card" style="grid-column: span 2; min-height: 130px; padding: 0.8rem 1.2rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.4rem;">
+                <span class="stat-title">Histórico de Disparos (Últimos 7 Dias)</span>
+                <span style="font-size:0.7rem; color:var(--success); font-weight:600; display:flex; align-items:center; gap:0.3rem">
+                    <span style="width:6px;height:6px;background:var(--success);border-radius:50%"></span> Sucesso
+                </span>
+            </div>
+            <div id="chart-container" class="chart-box">
+                <div style="display:flex; height:100%; align-items:center; justify-content:center; color:var(--text-muted); font-size:0.8rem">
+                    Carregando dados do gráfico...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
     <div class="dashboard-grid">
         <!-- Coluna Esquerda: Sites -->
         <div class="card" id="sites-card">
             <div class="card-header">
                 <span class="card-title">Sites Monitorados</span>
-                <button class="btn btn-primary" onclick="openModal('create')">
+                <button class="btn btn-primary btn-sm" onclick="openModal('create')">
                     + Novo Site
                 </button>
             </div>
             
+            <div class="filters-row">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input class="input-filter" type="text" id="search-sites" placeholder="Buscar site por nome/domínio..." oninput="filterSites()">
+                </div>
+            </div>
+
             <div id="sites-list" style="display: flex; flex-direction: column; gap: 1rem;">
-                <!-- Preenchido via API -->
-                <div class="empty-state">Carregando sites...</div>
+                <div class="empty-state">Carregando sites cadastrados...</div>
             </div>
         </div>
 
         <!-- Coluna Direita: Logs CAPI -->
         <div class="card" id="logs-card">
             <div class="card-header">
-                <span class="card-title">Histórico de Disparos (CAPI)</span>
-                <button class="btn btn-secondary btn-sm" onclick="loadAllLogs()">
-                    Atualizar Logs
-                </button>
+                <span class="card-title">Histórico de Disparos (Match Quality Log)</span>
+                <div style="display:flex; gap:0.4rem">
+                    <button class="btn btn-danger btn-sm" onclick="pruneLogs()" title="Excluir logs com mais de 30 dias">
+                        Limpar Antigos
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="refreshData()">
+                        Atualizar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="filters-row">
+                <select class="input-filter" id="filter-site" onchange="loadLogs()">
+                    <option value="">Todos os Sites</option>
+                </select>
+                <select class="input-filter" id="filter-status" onchange="loadLogs()">
+                    <option value="">Todos os Status</option>
+                    <option value="success">Sucesso</option>
+                    <option value="failed">Falha</option>
+                </select>
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input class="input-filter" type="text" id="filter-search" placeholder="Filtrar por evento..." oninput="loadLogs()">
+                </div>
             </div>
             
             <div id="logs-list" class="logs-container">
-                <!-- Preenchido via API -->
                 <div class="empty-state">Nenhum evento registrado ainda.</div>
             </div>
         </div>
@@ -462,28 +804,28 @@
             <input type="hidden" id="modal-site-id">
             
             <div class="form-group">
-                <label class="form-label" for="site-nome">Nome do Site / Projeto</label>
-                <input class="form-input" type="text" id="site-nome" placeholder="Ex: E-commerce Lançamento">
+                <label class="form-label" for="site-nome">Nome do Site / Projeto *</label>
+                <input class="form-input" type="text" id="site-nome" placeholder="Ex: E-commerce Principal">
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="site-dominio">Domínio (sem www.)</label>
+                <label class="form-label" for="site-dominio">Domínio (sem www. ou HTTPS) *</label>
                 <input class="form-input" type="text" id="site-dominio" placeholder="Ex: meudominio.com.br">
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="site-pixel-id">Meta Pixel ID</label>
+                <label class="form-label" for="site-pixel-id">Meta Pixel ID *</label>
                 <input class="form-input" type="text" id="site-pixel-id" placeholder="Ex: 123456789012345">
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="site-pixel-token">Token CAPI (Facebook Access Token)</label>
+                <label class="form-label" for="site-pixel-token">Token CAPI (Facebook Access Token) *</label>
                 <input class="form-input" type="password" id="site-pixel-token" placeholder="EAAGxxxxxx...">
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="site-test-code">Código de Teste da Meta (Opcional)</label>
-                <input class="form-input" type="text" id="site-test-code" placeholder="Ex: TEST12345 (para usar no debug da Meta)">
+                <label class="form-label" for="site-test-code">Código de Teste CAPI (Opcional)</label>
+                <input class="form-input" type="text" id="site-test-code" placeholder="Ex: TEST12345 (para usar no Gerenciador de Eventos)">
             </div>
 
             <div class="modal-actions">
@@ -496,22 +838,25 @@
     <!-- Modal Instruções de Instalação (Script Code) -->
     <div class="modal-overlay" id="script-modal">
         <div class="modal" style="max-width: 600px;">
-            <div class="modal-title">Código de Integração</div>
+            <div class="modal-title">Código de Integração Integrado</div>
             
-            <p style="font-size: 0.85rem; color: var(--text-muted)">
-                Insira o script abaixo no cabeçalho (<code style="color:#a78bfa">&lt;head&gt;</code>) de todas as páginas do site cadastrado. O script carregará o Pixel no navegador e se comunicará com esta API automaticamente.
+            <p style="font-size: 0.8rem; color: var(--text-muted)">
+                Insira o script abaixo no cabeçalho (<code style="color:#c084fc">&lt;head&gt;</code>) de todas as páginas do seu site. Ele carregará o Pixel no navegador e enviará eventos para a Conversions API (CAPI) simultaneamente com deduplicação nativa.
             </p>
 
             <div class="code-box" id="integration-script-code"></div>
 
-            <p style="font-size: 0.85rem; color: var(--text-muted)">
-                <strong>Como disparar eventos customizados (Ex: Formulário de Lead):</strong><br>
-                Chame a função global configurada no tracker quando o formulário for enviado:
+            <p style="font-size: 0.8rem; color: var(--text-muted)">
+                <strong>Como disparar eventos com dados do cliente (Correspondência Avançada):</strong><br>
+                Nosso rastreador <strong>captura automaticamente</strong> os dados inseridos em qualquer formulário de cadastro, login ou lead. Mas você também pode disparar eventos customizados (Ex: Compra) diretamente no código JavaScript:
             </p>
-            <div class="code-box">window.TrackSystem.track('Lead', {
-    email: 'email_do_cliente@gmail.com',
-    telefone: '11999999999',
-    nome: 'Nome do Usuário'
+            <div class="code-box">window.TrackSystem.track('Purchase', {
+    email: 'cliente@exemplo.com',
+    telefone: '5511999999999',
+    nome: 'Willian Moreira',
+    value: 149.90,
+    currency: 'BRL',
+    content_name: 'Curso Conversão CAPI'
 });</div>
 
             <div class="modal-actions">
@@ -521,120 +866,316 @@
     </div>
 
     <script>
-        const API_BASE = ''; // Relativo ao mesmo host
-        let activeSiteForLogsInterval = null;
+        const API_BASE = '';
+        let localSitesData = [];
 
-        // Ao carregar a página
+        // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
-            loadSites();
-            loadAllLogs();
+            refreshData();
             
-            // Auto atualiza logs a cada 10 segundos
-            setInterval(loadAllLogs, 10000);
+            // Loop de atualização automática lenta (a cada 20 segundos)
+            setInterval(() => {
+                loadStats(true);
+                loadLogs(true);
+            }, 20000);
         });
 
-        // LISTA SITES
+        // Atualização geral
+        async function refreshData() {
+            showToast('Atualizando dados do painel...', 'info');
+            await loadSites();
+            await loadStats();
+            await loadLogs();
+        }
+
+        // Exibir Toasts de Notificação
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = 'ℹ️';
+            if (type === 'success') icon = '✅';
+            if (type === 'error') icon = '❌';
+            
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            // Força reflow para animação funcionar
+            toast.offsetHeight;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // CARREGA SITES DO SERVIDOR
         async function loadSites() {
             const listDiv = document.getElementById('sites-list');
+            const siteSelect = document.getElementById('filter-site');
+            
             try {
                 const res = await fetch(`${API_BASE}/api/sites`);
-                const sites = await res.json();
+                localSitesData = await res.json();
                 
-                if (sites.length === 0) {
-                    listDiv.innerHTML = `
-                        <div class="empty-state">
-                            Nenhum site cadastrado ainda. Clique em "+ Novo Site" para iniciar.
-                        </div>`;
-                    return;
-                }
-
-                listDiv.innerHTML = '';
-                sites.forEach(site => {
-                    const item = document.createElement('div');
-                    item.className = 'site-item';
-                    item.innerHTML = `
-                        <div class="site-info">
-                            <div class="site-name">
-                                ${escapeHtml(site.nome)}
-                                ${site.ativo ? '' : '<span style="color:var(--danger);font-size:0.7rem;font-weight:600">(Inativo)</span>'}
-                            </div>
-                            <div class="site-domain">${escapeHtml(site.dominio)}</div>
-                            <div class="site-meta">Pixel ID: <code>${escapeHtml(site.meta_pixel_id)}</code></div>
-                            ${site.test_event_code ? `<div class="site-meta" style="color:#a78bfa;font-size:0.75rem">Modo Teste: ${escapeHtml(site.test_event_code)}</div>` : ''}
-                        </div>
-                        <div class="site-actions">
-                            <button class="btn btn-secondary btn-sm" onclick="showScript('${site.id}', '${site.dominio}')">⚡ Código</button>
-                            <button class="btn btn-secondary btn-sm" onclick="openModal('edit', '${site.id}')">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteSite('${site.id}')">Excluir</button>
-                        </div>
-                    `;
-                    listDiv.appendChild(item);
+                // Popula o dropdown de filtro no histórico de logs
+                const currentFilterVal = siteSelect.value;
+                siteSelect.innerHTML = '<option value="">Todos os Sites</option>';
+                localSitesData.forEach(site => {
+                    siteSelect.innerHTML += `<option value="${site.id}">${escapeHtml(site.nome)}</option>`;
                 });
+                siteSelect.value = currentFilterVal;
+
+                renderSites(localSitesData);
             } catch (err) {
                 console.error(err);
-                listDiv.innerHTML = '<div class="empty-state" style="color:var(--danger)">Erro ao carregar sites do servidor.</div>';
+                listDiv.innerHTML = '<div class="empty-state" style="color:var(--danger)">Erro ao conectar ao servidor para buscar sites.</div>';
             }
         }
 
-        // CARREGA LOGS
-        async function loadAllLogs() {
-            const logsDiv = document.getElementById('logs-list');
+        // RENDERIZA LISTA DE SITES
+        function renderSites(sites) {
+            const listDiv = document.getElementById('sites-list');
+            if (sites.length === 0) {
+                listDiv.innerHTML = `
+                    <div class="empty-state">
+                        Nenhum site monitorado. Clique em "+ Novo Site" para iniciar seu rastreamento.
+                    </div>`;
+                return;
+            }
+
+            listDiv.innerHTML = '';
+            sites.forEach(site => {
+                const item = document.createElement('div');
+                item.className = 'site-item';
+                item.innerHTML = `
+                    <div class="site-top">
+                        <div class="site-info">
+                            <div class="site-name">
+                                ${escapeHtml(site.nome)}
+                                ${site.ativo ? '<span style="width:6px;height:6px;background:var(--success);border-radius:50%;display:inline-block"></span>' : '<span style="color:var(--danger);font-size:0.7rem;font-weight:600">(Inativo)</span>'}
+                            </div>
+                            <div class="site-domain">${escapeHtml(site.dominio)}</div>
+                            <div class="site-meta">Pixel ID: <code>${escapeHtml(site.meta_pixel_id)}</code></div>
+                            ${site.test_event_code ? `<div class="site-meta" style="color:#c084fc;font-size:0.72rem">Código de Teste: <code>${escapeHtml(site.test_event_code)}</code></div>` : ''}
+                        </div>
+                    </div>
+                    <div class="site-actions">
+                        <button class="btn btn-secondary btn-sm" id="btn-test-${site.id}" onclick="testConnection('${site.id}')">
+                            🔌 Testar Conexão
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="showScript('${site.id}', '${site.dominio}')">
+                            ⚡ Instalar
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="openModal('edit', '${site.id}')">
+                            Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSite('${site.id}')">
+                            Excluir
+                        </button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        }
+
+        // FILTRA LISTA DE SITES LOCALMENTE
+        function filterSites() {
+            const query = document.getElementById('search-sites').value.toLowerCase();
+            const filtered = localSitesData.filter(site => 
+                site.nome.toLowerCase().includes(query) || 
+                site.dominio.toLowerCase().includes(query)
+            );
+            renderSites(filtered);
+        }
+
+        // CARREGA ESTATÍSTICAS E GRÁFICO
+        async function loadStats(silent = false) {
             try {
-                // Buscamos os logs das configurações administrativas
-                const res = await fetch(`${API_BASE}/api/sites`);
-                const sites = await res.json();
+                const res = await fetch(`${API_BASE}/api/sites/stats`);
+                const stats = await res.json();
                 
-                let allLogs = [];
-                for (const site of sites) {
-                    const logRes = await fetch(`${API_BASE}/api/sites/${site.id}/logs`);
-                    const logs = await logRes.json();
-                    logs.forEach(l => {
-                        l.siteName = site.nome;
-                        allLogs.push(l);
-                    });
-                }
+                document.getElementById('stat-total-sites').textContent = stats.summary.totalSites;
+                document.getElementById('stat-active-sites').textContent = `${stats.summary.activeSites} ativos`;
+                document.getElementById('stat-total-events').textContent = stats.summary.totalEvents;
+                document.getElementById('stat-success-rate').textContent = `${stats.summary.successRate}%`;
+                document.getElementById('stat-failed-events').textContent = `${stats.summary.failedEvents} disparos falharam`;
+                
+                // Desenha o gráfico SVG
+                drawChart(stats.dailyData);
+            } catch (err) {
+                console.error('Erro ao obter estatísticas:', err);
+                if (!silent) showToast('Não foi possível atualizar as estatísticas de entrega.', 'error');
+            }
+        }
 
-                // Ordena por data decrescente
-                allLogs.sort((a,b) => new Date(b.criado_em) - new Date(a.criado_em));
-                // Limita aos 50 primeiros
-                allLogs = allLogs.slice(0, 50);
+        // DESENHA O GRÁFICO SVG DENTRO DO CONTAINER
+        function drawChart(dailyData) {
+            const chartDiv = document.getElementById('chart-container');
+            if (!dailyData || dailyData.length === 0) {
+                chartDiv.innerHTML = '<div class="empty-state">Sem histórico recente disponível</div>';
+                return;
+            }
 
-                if (allLogs.length === 0) {
-                    logsDiv.innerHTML = '<div class="empty-state">Nenhum evento CAPI disparado recentemente.</div>';
+            const width = 600;
+            const height = 140;
+            const paddingLeft = 30;
+            const paddingRight = 15;
+            const paddingTop = 15;
+            const paddingBottom = 20;
+            
+            const maxVal = Math.max(...dailyData.map(d => d.total), 5);
+            
+            const pointsTotal = [];
+            const pointsSuccess = [];
+            
+            const drawWidth = width - paddingLeft - paddingRight;
+            const drawHeight = height - paddingTop - paddingBottom;
+            const stepX = drawWidth / (dailyData.length - 1 || 1);
+            
+            dailyData.forEach((d, idx) => {
+                const x = paddingLeft + idx * stepX;
+                const yTotal = paddingTop + drawHeight - ((d.total / maxVal) * drawHeight);
+                const ySuccess = paddingTop + drawHeight - ((d.success / maxVal) * drawHeight);
+                
+                pointsTotal.push(`${x},${yTotal}`);
+                pointsSuccess.push(`${x},${ySuccess}`);
+            });
+            
+            const polylineTotal = pointsTotal.join(' ');
+            const polylineSuccess = pointsSuccess.join(' ');
+            
+            const firstX = paddingLeft;
+            const lastX = paddingLeft + (dailyData.length - 1) * stepX;
+            const baseY = height - paddingBottom;
+            
+            const areaTotalPoints = `${firstX},${baseY} ${polylineTotal} ${lastX},${baseY}`;
+            const areaSuccessPoints = `${firstX},${baseY} ${polylineSuccess} ${lastX},${baseY}`;
+
+            let svgHtml = `
+            <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; overflow:visible">
+                <defs>
+                    <linearGradient id="successGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--success)" stop-opacity="0.25"/>
+                        <stop offset="100%" stop-color="var(--success)" stop-opacity="0.0"/>
+                    </linearGradient>
+                    <linearGradient id="totalGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.15"/>
+                        <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.0"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Linhas Horizontais de Grade -->
+                <line x1="${paddingLeft}" y1="${paddingTop}" x2="${width - paddingRight}" y2="${paddingTop}" stroke="rgba(255,255,255,0.03)" stroke-dasharray="3"/>
+                <line x1="${paddingLeft}" y1="${paddingTop + drawHeight/2}" x2="${width - paddingRight}" y2="${paddingTop + drawHeight/2}" stroke="rgba(255,255,255,0.03)" stroke-dasharray="3"/>
+                <line x1="${paddingLeft}" y1="${height - paddingBottom}" x2="${width - paddingRight}" y2="${height - paddingBottom}" stroke="rgba(255,255,255,0.08)"/>
+                
+                <!-- Escalas Laterais -->
+                <text x="5" y="${paddingTop + 4}" fill="var(--text-muted)" font-size="8">${maxVal}</text>
+                <text x="5" y="${paddingTop + drawHeight/2 + 4}" fill="var(--text-muted)" font-size="8">${Math.floor(maxVal/2)}</text>
+                <text x="5" y="${height - paddingBottom + 4}" fill="var(--text-muted)" font-size="8">0</text>
+
+                <!-- Áreas preenchidas -->
+                <polygon points="${areaTotalPoints}" fill="url(#totalGrad)" />
+                <polygon points="${areaSuccessPoints}" fill="url(#successGrad)" />
+                
+                <!-- Linha de Total -->
+                <polyline points="${polylineTotal}" fill="none" stroke="rgba(139, 92, 246, 0.3)" stroke-width="1.5" stroke-dasharray="3" stroke-linecap="round"/>
+                <!-- Linha de Sucesso -->
+                <polyline points="${polylineSuccess}" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round"/>
+                
+                <!-- Círculos de Sucesso -->
+                ${dailyData.map((d, idx) => {
+                    const [x, y] = pointsSuccess[idx].split(',');
+                    return `
+                        <circle cx="${x}" cy="${y}" r="3.5" fill="var(--success)" stroke="var(--bg-color)" stroke-width="1.5" class="chart-dot">
+                            <title>${d.date}: ${d.success} disparos ok (${d.total} total)</title>
+                        </circle>
+                    `;
+                }).join('')}
+
+                <!-- Textos das datas no Eixo X -->
+                ${dailyData.map((d, idx) => {
+                    const x = paddingLeft + idx * stepX;
+                    return `
+                        <text x="${x}" y="${height - 4}" fill="var(--text-muted)" font-size="8" text-anchor="middle" font-weight="600">${d.date}</text>
+                    `;
+                }).join('')}
+            </svg>`;
+            
+            chartDiv.innerHTML = svgHtml;
+        }
+
+        // CARREGA HISTÓRICO GLOBAL DE LOGS CAPI
+        async function loadLogs(silent = false) {
+            const logsDiv = document.getElementById('logs-list');
+            const siteId = document.getElementById('filter-site').value;
+            const status = document.getElementById('filter-status').value;
+            const search = document.getElementById('filter-search').value;
+
+            try {
+                let url = `${API_BASE}/api/sites/logs?limit=50`;
+                if (siteId) url += `&site_id=${siteId}`;
+                if (status) url += `&status=${status}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+
+                const res = await fetch(url);
+                const logs = await res.json();
+
+                if (logs.length === 0) {
+                    logsDiv.innerHTML = '<div class="empty-state">Nenhum evento correspondente encontrado.</div>';
                     return;
                 }
 
                 logsDiv.innerHTML = '';
-                allLogs.forEach(log => {
-                    const date = new Date(log.criado_em).toLocaleTimeString('pt-BR');
+                logs.forEach(log => {
+                    const timestamp = new Date(log.criado_em);
+                    const formattedDate = timestamp.toLocaleDateString('pt-BR') + ' às ' + timestamp.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
                     const isSuccess = log.status === 'success';
                     const item = document.createElement('div');
                     item.className = 'log-item';
+                    
+                    // Decodifica o response_body para formato estruturado
+                    let displayBody = log.response_body;
+                    let isJson = false;
+                    let isErrorPayload = !isSuccess;
+                    
+                    try {
+                        const parsed = JSON.parse(log.response_body);
+                        displayBody = JSON.stringify(parsed, null, 2);
+                        isJson = true;
+                    } catch (_) {
+                        // Mantém formato original
+                    }
+
                     item.innerHTML = `
                         <div class="log-row-main" onclick="toggleDetails('${log.id}')">
-                            <div>
-                                <span class="log-event-name">[${escapeHtml(log.siteName)}] ${escapeHtml(log.event_name)}</span>
-                                <span style="font-size:0.75rem;color:var(--text-muted);margin-left:0.5rem">${date}</span>
+                            <div class="log-event-name">
+                                <span>⚡ ${escapeHtml(log.event_name)}</span>
+                                <span style="font-size:0.7rem; color:var(--text-muted); font-weight:normal">
+                                    [${escapeHtml(log.site_name || 'Site Inexistente')}]
+                                </span>
                             </div>
                             <span class="log-badge ${log.status}">
-                                ${log.status.toUpperCase()}
+                                ${log.status}
                             </span>
                         </div>
                         <div class="log-meta-info">
                             <span>ID: <code>${escapeHtml(log.event_id)}</code></span>
-                            <span style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(log.page_url)}">
-                                ${escapeHtml(log.page_url || 'N/A')}
-                            </span>
+                            <span style="font-size:0.7rem">${formattedDate}</span>
                         </div>
-                        <div class="log-details" id="details-${log.id}">
-                            ${escapeHtml(JSON.stringify(JSON.parse(log.response_body || '{}'), null, 2))}
+                        <div style="font-size:0.7rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:0.15rem" title="${escapeHtml(log.page_url)}">
+                            URL: ${escapeHtml(log.page_url || 'N/A')}
                         </div>
+                        <div class="log-details ${isErrorPayload ? 'error-color' : ''}" id="details-${log.id}">${escapeHtml(displayBody)}</div>
                     `;
                     logsDiv.appendChild(item);
                 });
             } catch (err) {
                 console.error(err);
-                // Não substitui todo o HTML se der erro de conexão momentâneo
+                if (!silent) logsDiv.innerHTML = '<div class="empty-state" style="color:var(--danger)">Erro de comunicação ao obter logs.</div>';
             }
         }
 
@@ -648,25 +1189,73 @@
             }
         }
 
+        // DISPARA UM DISPARO TESTE DE CAPI EM TEMPO REAL
+        async function testConnection(id) {
+            const btn = document.getElementById(`btn-test-${id}`);
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Testando...';
+            
+            showToast('Disparando evento de teste para o Pixel CAPI...', 'info');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/sites/${id}/test`, { method: 'POST' });
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    showToast('CAPI conectada com sucesso! Evento entregue à Meta.', 'success');
+                } else {
+                    const errMsg = data.response?.error?.message || data.response?.message || 'Token ou Pixel ID inválido.';
+                    showToast(`Falha: ${errMsg}`, 'error');
+                    console.error('Resposta de Teste:', data.response);
+                }
+            } catch (err) {
+                showToast('Erro de requisição ao testar a CAPI.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+                loadLogs();
+                loadStats();
+            }
+        }
+
+        // LIMPAR LOGS ANTIGOS
+        async function pruneLogs() {
+            if (!confirm('Deseja excluir permanentemente todos os logs com mais de 30 dias?')) return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/sites/logs/prune`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    refreshData();
+                } else {
+                    showToast('Erro ao limpar os logs antigos.', 'error');
+                }
+            } catch (err) {
+                showToast('Falha na requisição de limpeza.', 'error');
+            }
+        }
+
         // DELETAR SITE
         async function deleteSite(id) {
-            if (!confirm('Deseja realmente excluir as configurações de rastreamento deste site?')) return;
+            if (!confirm('Tem certeza absoluta de que deseja excluir este site? Todo o histórico de logs local será desvinculado.')) return;
 
             try {
                 const res = await fetch(`${API_BASE}/api/sites/${id}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (data.success) {
-                    loadSites();
-                    loadAllLogs();
+                    showToast('Configuração do site excluída.', 'success');
+                    refreshData();
                 } else {
-                    alert('Erro ao excluir: ' + data.error);
+                    showToast('Falha ao excluir: ' + data.error, 'error');
                 }
             } catch (err) {
-                alert('Erro na requisição.');
+                showToast('Erro ao enviar exclusão.', 'error');
             }
         }
 
-        // MODAL CONFIGS
+        // MODAL CONFIGS (CREATE & EDIT)
         function openModal(mode, id = null) {
             const overlay = document.getElementById('site-modal');
             const title = document.getElementById('modal-title');
@@ -680,10 +1269,12 @@
             document.getElementById('site-test-code').value = '';
 
             if (mode === 'create') {
-                title.textContent = 'Configurar Novo Site';
+                title.textContent = 'Configurar Novo Rastreamento';
                 overlay.classList.add('active');
             } else if (mode === 'edit' && id) {
-                title.textContent = 'Editar Configurações';
+                title.textContent = 'Editar Rastreamento';
+                showToast('Carregando dados para edição...', 'info');
+                
                 fetch(`${API_BASE}/api/sites/${id}`)
                     .then(res => res.json())
                     .then(site => {
@@ -695,7 +1286,9 @@
                         document.getElementById('site-test-code').value = site.test_event_code || '';
                         overlay.classList.add('active');
                     })
-                    .catch(err => alert('Erro ao carregar dados do site.'));
+                    .catch(err => {
+                        showToast('Falha ao obter dados do site do servidor.', 'error');
+                    });
             }
         }
 
@@ -703,7 +1296,7 @@
             document.getElementById('site-modal').classList.remove('active');
         }
 
-        // SALVAR SITE (CREATE & UPDATE)
+        // SALVAR SITE
         async function saveSite() {
             const id = document.getElementById('modal-site-id').value;
             const nome = document.getElementById('site-nome').value;
@@ -713,7 +1306,7 @@
             const testCode = document.getElementById('site-test-code').value;
 
             if (!nome || !dominio || !pixelId || !token) {
-                alert('Preencha todos os campos obrigatórios.');
+                showToast('Por favor, preencha todos os campos obrigatórios (*).', 'error');
                 return;
             }
 
@@ -737,20 +1330,21 @@
                 
                 const data = await res.json();
                 if (res.ok && data.success) {
+                    showToast('Rastreamento de site salvo com sucesso!', 'success');
                     closeModal();
-                    loadSites();
+                    refreshData();
                 } else {
-                    alert('Erro ao salvar: ' + (data.error || 'Erro desconhecido.'));
+                    showToast(data.error || 'Erro ao gravar informações.', 'error');
                 }
             } catch (err) {
-                alert('Erro ao enviar requisição.');
+                showToast('Erro de rede ao salvar site.', 'error');
             }
         }
 
-        // MOSTRAR SCRIPT DE INTEGRAÇÃO
+        // MOSTRAR SCRIPT DE INTEGRAÇÃO COM COORDENADAS INTEGRADAS
         function showScript(siteId, dominio) {
             const host = window.location.origin;
-            const code = `&lt;!-- MetaAds Tracking Code for ${escapeHtml(dominio)} --&gt;\n` +
+            const code = `&lt;!-- MetaAds Integrated Tracking Code for ${escapeHtml(dominio)} --&gt;\n` +
                          `&lt;script src="${host}/tracker.js" data-site-id="${siteId}" async&gt;&lt;/script&gt;`;
             
             document.getElementById('integration-script-code').innerHTML = code;

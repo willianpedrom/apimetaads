@@ -22,3 +22,8 @@ CREATE TABLE IF NOT EXISTS events_log (
     response_body TEXT,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Índices para melhorar a performance de consultas e relatórios
+CREATE INDEX IF NOT EXISTS idx_events_log_site_criado ON events_log(site_id, criado_em DESC);
+CREATE INDEX IF NOT EXISTS idx_events_log_criado ON events_log(criado_em DESC);
+

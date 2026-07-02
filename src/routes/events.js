@@ -14,12 +14,23 @@ const trackerTemplate = `(function() {
         siteId: siteId,
         apiUrl: '{{API_URL}}',
         pixelId: null,
+        deviceId: null,
 
         generateUUID: function() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
+        },
+
+        setCookie: function(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
         },
 
         getCookies: function() {
@@ -34,9 +45,56 @@ const trackerTemplate = `(function() {
             return cookies;
         },
 
+        checkFbclid: function() {
+            var match = window.location.search.match(/[?&]fbclid=([^&]+)/);
+            if (match) {
+                var fbclid = match[1];
+                var cookies = this.getCookies();
+                if (!cookies._fbc) {
+                    var fbcValue = 'fb.1.' + Date.now() + '.' + fbclid;
+                    this.setCookie('_fbc', fbcValue, 730);
+                }
+            }
+        },
+
+        checkFbp: function() {
+            var cookies = this.getCookies();
+            if (!cookies._fbp) {
+                // Formato oficial do _fbp da Meta: fb.1.{timestamp_ms}.{rand_10_digitos}
+                var rand = Math.floor(1000000000 + Math.random() * 9000000000);
+                var fbpValue = 'fb.1.' + Date.now() + '.' + rand;
+                this.setCookie('_fbp', fbpValue, 730);
+            }
+        },
+
+        getStoredUserData: function() {
+            try {
+                var data = localStorage.getItem('_metaads_user_data');
+                return data ? JSON.parse(data) : null;
+            } catch (_) {
+                return null;
+            }
+        },
+
+        initDeviceId: function() {
+            try {
+                var devId = localStorage.getItem('_metaads_device_id');
+                if (!devId) {
+                    devId = this.generateUUID();
+                    localStorage.setItem('_metaads_device_id', devId);
+                }
+                this.deviceId = devId;
+            } catch (_) {
+                this.deviceId = this.generateUUID();
+            }
+        },
+
         init: function(pixelId) {
             if (!pixelId) return;
             this.pixelId = pixelId;
+            this.initDeviceId();
+            this.checkFbclid();
+            this.checkFbp();
             
             if (!window.fbq) {
                 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -48,12 +106,36 @@ const trackerTemplate = `(function() {
                 'https://connect.facebook.net/en_US/fbevents.js');
             }
 
-            fbq('init', pixelId);
+            var initOptions = {};
+            if (this.deviceId) {
+                initOptions.external_id = this.deviceId;
+            }
+
+            fbq('init', pixelId, initOptions);
             fbq('track', 'PageView');
+
+            this.setupSPA();
+            this.autoCaptureForms();
         },
 
         track: function(eventName, userData) {
             userData = userData || {};
+            
+            var storedData = this.getStoredUserData() || {};
+            var mergedUserData = {};
+            
+            for (var k in storedData) {
+                mergedUserData[k] = storedData[k];
+            }
+            for (var k in userData) {
+                if (k !== 'customData') {
+                    mergedUserData[k] = userData[k];
+                }
+            }
+            if (!mergedUserData.userId && this.deviceId) {
+                mergedUserData.userId = this.deviceId;
+            }
+
             var eventId = this.generateUUID();
             var pageUrl = window.location.href;
 
@@ -70,7 +152,7 @@ const trackerTemplate = `(function() {
                 event_name: eventName,
                 event_id: eventId,
                 page_url: pageUrl,
-                user_data: userData,
+                user_data: mergedUserData,
                 cookies: this.getCookies()
             };
 
@@ -81,6 +163,93 @@ const trackerTemplate = `(function() {
                 keepalive: true
             }).catch(function(err) {
                 console.warn('[Tracker] CAPI call failed:', err);
+            });
+        },
+
+        setupSPA: function() {
+            var self = this;
+            var lastUrl = window.location.href;
+            
+            function checkUrlChange() {
+                if (window.location.href !== lastUrl) {
+                    lastUrl = window.location.href;
+                    self.track('PageView');
+                }
+            }
+            
+            window.addEventListener('popstate', checkUrlChange);
+            window.addEventListener('hashchange', checkUrlChange);
+            
+            var originalPushState = history.pushState;
+            if (originalPushState) {
+                history.pushState = function() {
+                    originalPushState.apply(this, arguments);
+                    checkUrlChange();
+                };
+            }
+            
+            var originalReplaceState = history.replaceState;
+            if (originalReplaceState) {
+                history.replaceState = function() {
+                    originalReplaceState.apply(this, arguments);
+                    checkUrlChange();
+                };
+            }
+        },
+
+        autoCaptureForms: function() {
+            var self = this;
+            document.addEventListener('submit', function(e) {
+                try {
+                    var form = e.target;
+                    var inputs = form.querySelectorAll('input, select');
+                    var captured = {};
+                    var hasData = false;
+                    
+                    for (var i = 0; i < inputs.length; i++) {
+                        var input = inputs[i];
+                        var name = (input.name || input.id || '').toLowerCase();
+                        var type = (input.type || '').toLowerCase();
+                        var value = (input.value || '').trim();
+                        if (!value) continue;
+                        
+                        if (type === 'email' || name.indexOf('email') > -1 || name.indexOf('mail') > -1) {
+                            captured.email = value;
+                            hasData = true;
+                        } else if (type === 'tel' || name.indexOf('phone') > -1 || name.indexOf('tel') > -1 || name.indexOf('fone') > -1 || name.indexOf('celular') > -1 || name.indexOf('whatsapp') > -1) {
+                            captured.telefone = value;
+                            hasData = true;
+                        } else if (name.indexOf('nome') > -1 || name.indexOf('name') > -1) {
+                            if (name.indexOf('first') > -1 || name.indexOf('prio') > -1) {
+                                captured.firstName = value;
+                            } else if (name.indexOf('last') > -1 || name.indexOf('sobrenome') > -1) {
+                                captured.lastName = value;
+                            } else {
+                                captured.nome = value;
+                            }
+                            hasData = true;
+                        } else if (name.indexOf('cidade') > -1 || name.indexOf('city') > -1) {
+                            captured.cidade = value;
+                            hasData = true;
+                        } else if (name.indexOf('estado') > -1 || name.indexOf('state') > -1 || name.indexOf('uf') > -1) {
+                            captured.estado = value;
+                            hasData = true;
+                        } else if (name.indexOf('cep') > -1 || name.indexOf('zip') > -1) {
+                            captured.cep = value;
+                            hasData = true;
+                        }
+                    }
+                    
+                    if (hasData) {
+                        var existing = self.getStoredUserData() || {};
+                        for (var key in captured) {
+                            existing[key] = captured[key];
+                        }
+                        localStorage.setItem('_metaads_user_data', JSON.stringify(existing));
+                    }
+                } catch (err) {
+                    console.warn('[Tracker] Form capture error:', err);
+                }
             });
         }
     };
@@ -171,9 +340,15 @@ router.post('/api/events/track', async (req, res) => {
             return res.status(404).json({ error: 'Site não configurado ou inativo.' });
         }
 
-        // 3. Obtém dados de conexão
-        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        // 3. Obtém dados de conexão e geolocalização via cabeçalhos de proxy (Cloudflare/Vercel)
+        const clientIp = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const userAgent = req.headers['user-agent'];
+
+        const geoHeaders = {
+            cidade: req.headers['cf-ipcity'] || req.headers['x-vercel-ip-city'],
+            estado: req.headers['cf-region'] || req.headers['x-vercel-ip-country-region'],
+            pais: req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country']
+        };
 
         // 4. Executa o envio CAPI assincronamente (não bloqueia a resposta HTTP)
         sendMetaCapiEvent({
@@ -187,7 +362,8 @@ router.post('/api/events/track', async (req, res) => {
             clientIp,
             userAgent,
             cookies: cookies || {},
-            userData: user_data || {}
+            userData: user_data || {},
+            geoHeaders
         }).catch(err => console.error('[CAPI Trigger Error]', err));
 
         // Retorna sucesso de processamento imediato
