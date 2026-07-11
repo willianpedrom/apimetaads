@@ -27,6 +27,10 @@ app.use('/', eventsRouter); // tracker.js na raiz
 const sitesRouter = require('./routes/sites');
 app.use('/api/sites', sitesRouter);
 
+// Rotas de Webhooks para Integrações Externas (Hotmart, Payt, etc.)
+const webhooksRouter = require('./routes/webhooks');
+app.use('/api/webhooks', webhooksRouter);
+
 // Rota de Health Check
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', uptime: process.uptime() });

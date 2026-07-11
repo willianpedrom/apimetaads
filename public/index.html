@@ -859,6 +859,18 @@
     content_name: 'Curso Conversão CAPI'
 });</div>
 
+            <p style="font-size: 0.8rem; color: var(--text-muted)">
+                <strong>Webhook da Hotmart (para registrar vendas automáticas):</strong><br>
+                Cadastre a URL abaixo no painel de Webhooks da Hotmart (API 2.0 para Compra Aprovada/Completa) para processar vendas em tempo real deste site:
+            </p>
+            <div class="code-box" id="webhook-hotmart-code"></div>
+
+            <p style="font-size: 0.8rem; color: var(--text-muted)">
+                <strong>Webhook da Payt (para registrar vendas automáticas):</strong><br>
+                Cadastre a URL abaixo no painel de Webhooks da Payt (Postback V1 para Venda Aprovada/Finalizada) para processar vendas em tempo real deste site:
+            </p>
+            <div class="code-box" id="webhook-payt-code"></div>
+
             <div class="modal-actions">
                 <button class="btn btn-primary" onclick="closeScriptModal()">Entendido</button>
             </div>
@@ -1348,6 +1360,13 @@
                          `&lt;script src="${host}/tracker.js" data-site-id="${siteId}" async&gt;&lt;/script&gt;`;
             
             document.getElementById('integration-script-code').innerHTML = code;
+
+            const hotmartUrl = `${host}/api/webhooks/hotmart?site_id=${siteId}`;
+            const paytUrl = `${host}/api/webhooks/payt?site_id=${siteId}`;
+
+            document.getElementById('webhook-hotmart-code').innerHTML = hotmartUrl;
+            document.getElementById('webhook-payt-code').innerHTML = paytUrl;
+
             document.getElementById('script-modal').classList.add('active');
         }
 
