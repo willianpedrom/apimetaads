@@ -539,32 +539,279 @@
         }
 
         .modal {
-            background: #0d1322;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            border-radius: 16px;
+            background: rgba(13, 20, 35, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
             width: 92%;
             max-width: 550px;
             padding: 1.8rem;
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
-            transform: scale(0.95);
-            transition: transform 0.25s ease;
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
             max-height: 90vh;
             overflow-y: auto;
+            opacity: 0;
         }
 
         .modal-overlay.active .modal {
-            transform: scale(1);
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
 
         .modal-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Modal header controls */
+        .modal-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             padding-bottom: 0.8rem;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1;
+            padding: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+            transform: rotate(90deg);
+        }
+
+        /* Modal Tabs Navigation */
+        .modal-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .tab-btn svg {
+            opacity: 0.7;
+            transition: transform 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .tab-btn:hover svg {
+            transform: scale(1.1);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(139, 92, 246, 0.04);
+        }
+
+        /* Tab Content panels */
+        .tab-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 52vh;
+            padding-right: 0.2rem;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: panelFadeIn 0.25s ease forwards;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes panelFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .code-inline {
+            background: rgba(255, 255, 255, 0.06);
+            color: #c084fc;
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+
+        /* Premium Code Box Wrapper */
+        .code-block-wrapper {
+            background: #060913;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .code-block-header {
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-block-lang {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .btn-copy {
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #c084fc;
+            padding: 0.3rem 0.65rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-copy:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-copy.copied {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .code-block-content {
+            margin: 0;
+            padding: 0.9rem;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            color: #a78bfa;
+            white-space: pre-wrap;
+            word-break: break-all;
+            background: transparent;
+            display: block;
+            line-height: 1.45;
+        }
+
+        .code-block-content.text-single-line {
+            white-space: pre;
+            word-break: normal;
+        }
+
+        /* Webhook Sections */
+        .webhook-section {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .webhook-section:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .webhook-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .webhook-platform {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .webhook-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .webhook-badge.hotmart {
+            background: rgba(240, 76, 36, 0.12);
+            color: #f04c24;
+            border: 1px solid rgba(240, 76, 36, 0.25);
+        }
+
+        .webhook-badge.payt {
+            background: rgba(30, 200, 100, 0.12);
+            color: #1ec864;
+            border: 1px solid rgba(30, 200, 100, 0.25);
+        }
+
+        .webhook-desc {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
         }
 
         .form-group {
@@ -837,42 +1084,117 @@
 
     <!-- Modal Instruções de Instalação (Script Code) -->
     <div class="modal-overlay" id="script-modal">
-        <div class="modal" style="max-width: 600px;">
-            <div class="modal-title">Código de Integração Integrado</div>
+        <div class="modal" style="max-width: 700px; width: 95%;">
+            <div class="modal-header-container">
+                <div class="modal-title">Configurações de Integração</div>
+                <button class="modal-close-btn" onclick="closeScriptModal()">&times;</button>
+            </div>
             
-            <p style="font-size: 0.8rem; color: var(--text-muted)">
-                Insira o script abaixo no cabeçalho (<code style="color:#c084fc">&lt;head&gt;</code>) de todas as páginas do seu site. Ele carregará o Pixel no navegador e enviará eventos para a Conversions API (CAPI) simultaneamente com deduplicação nativa.
-            </p>
+            <!-- Tab Navigation -->
+            <div class="modal-tabs">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-script')">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"/></svg>
+                    Script de Rastreamento
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-webhooks')">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/></svg>
+                    Webhooks de Vendas
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-js-api')">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                    Disparos Customizados
+                </button>
+            </div>
 
-            <div class="code-box" id="integration-script-code"></div>
+            <!-- Tab Panels -->
+            <div class="tab-content">
+                <!-- Panel 1: Script -->
+                <div class="tab-panel active" id="tab-script">
+                    <p class="panel-desc">
+                        Copie e insira o script abaixo no cabeçalho (<code class="code-inline">&lt;head&gt;</code>) de todas as páginas do seu site. Ele ativa o Pixel no navegador e envia eventos para a API de Conversões (CAPI) simultaneamente, com deduplicação nativa.
+                    </p>
+                    <div class="code-block-wrapper">
+                        <div class="code-block-header">
+                            <span class="code-block-lang">HTML / JavaScript</span>
+                            <button class="btn-copy" onclick="copyCode('integration-script-code')">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:2px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c1.005.492 1.7 1.526 1.7 2.712v12.75A2.25 2.25 0 0 1 15 21.75H9a2.25 2.25 0 0 1-2.25-2.25V6.6c0-1.186.695-2.22 1.7-2.712A1.5 1.5 0 0 1 9 3.75h6c.328 0 .639.105.894.288Z"/></svg>
+                                <span class="copy-text">Copiar Código</span>
+                            </button>
+                        </div>
+                        <pre><code class="code-block-content" id="integration-script-code"></code></pre>
+                    </div>
+                </div>
 
-            <p style="font-size: 0.8rem; color: var(--text-muted)">
-                <strong>Como disparar eventos com dados do cliente (Correspondência Avançada):</strong><br>
-                Nosso rastreador <strong>captura automaticamente</strong> os dados inseridos em qualquer formulário de cadastro, login ou lead. Mas você também pode disparar eventos customizados (Ex: Compra) diretamente no código JavaScript:
-            </p>
-            <div class="code-box">window.TrackSystem.track('Purchase', {
+                <!-- Panel 2: Webhooks -->
+                <div class="tab-panel" id="tab-webhooks">
+                    <p class="panel-desc">
+                        Gere vendas automáticas enviando webhooks de plataformas de pagamento diretamente para as URLs do site configurado.
+                    </p>
+                    
+                    <div class="webhook-section">
+                        <div class="webhook-title-wrapper">
+                            <h4 class="webhook-platform">Webhook da Hotmart</h4>
+                            <span class="webhook-badge hotmart">API 2.0</span>
+                        </div>
+                        <p class="webhook-desc">Configure esta URL na Hotmart para eventos de <strong>Compra Aprovada/Completa</strong>:</p>
+                        <div class="code-block-wrapper">
+                            <div class="code-block-header">
+                                <span class="code-block-lang">URL de Postback</span>
+                                <button class="btn-copy" onclick="copyCode('webhook-hotmart-code')">
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:2px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c1.005.492 1.7 1.526 1.7 2.712v12.75A2.25 2.25 0 0 1 15 21.75H9a2.25 2.25 0 0 1-2.25-2.25V6.6c0-1.186.695-2.22 1.7-2.712A1.5 1.5 0 0 1 9 3.75h6c.328 0 .639.105.894.288Z"/></svg>
+                                    <span class="copy-text">Copiar Link</span>
+                                </button>
+                            </div>
+                            <pre><code class="code-block-content text-single-line" id="webhook-hotmart-code"></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="webhook-section" style="margin-top: 1.2rem;">
+                        <div class="webhook-title-wrapper">
+                            <h4 class="webhook-platform">Webhook da Payt</h4>
+                            <span class="webhook-badge payt">V1 Postback</span>
+                        </div>
+                        <p class="webhook-desc">Configure esta URL na Payt para eventos de <strong>Aprovada/Finalizada</strong>:</p>
+                        <div class="code-block-wrapper">
+                            <div class="code-block-header">
+                                <span class="code-block-lang">URL de Postback</span>
+                                <button class="btn-copy" onclick="copyCode('webhook-payt-code')">
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:2px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c1.005.492 1.7 1.526 1.7 2.712v12.75A2.25 2.25 0 0 1 15 21.75H9a2.25 2.25 0 0 1-2.25-2.25V6.6c0-1.186.695-2.22 1.7-2.712A1.5 1.5 0 0 1 9 3.75h6c.328 0 .639.105.894.288Z"/></svg>
+                                    <span class="copy-text">Copiar Link</span>
+                                </button>
+                            </div>
+                            <pre><code class="code-block-content text-single-line" id="webhook-payt-code"></code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel 3: JS API -->
+                <div class="tab-panel" id="tab-js-api">
+                    <p class="panel-desc">
+                        O rastreador captura automaticamente e-mail, nome e telefone inseridos nos formulários. Para disparar eventos personalizados como compras manuais ou checkout iniciado, chame a função abaixo via JS:
+                    </p>
+                    <div class="code-block-wrapper">
+                        <div class="code-block-header">
+                            <span class="code-block-lang">JavaScript API</span>
+                            <button class="btn-copy" onclick="copyCode('custom-js-code')">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:2px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c1.005.492 1.7 1.526 1.7 2.712v12.75A2.25 2.25 0 0 1 15 21.75H9a2.25 2.25 0 0 1-2.25-2.25V6.6c0-1.186.695-2.22 1.7-2.712A1.5 1.5 0 0 1 9 3.75h6c.328 0 .639.105.894.288Z"/></svg>
+                                <span class="copy-text">Copiar Código</span>
+                            </button>
+                        </div>
+                        <pre><code class="code-block-content" id="custom-js-code">window.TrackSystem.track('Purchase', {
     email: 'cliente@exemplo.com',
     telefone: '5511999999999',
     nome: 'Willian Moreira',
     value: 149.90,
     currency: 'BRL',
     content_name: 'Curso Conversão CAPI'
-});</div>
-
-            <p style="font-size: 0.8rem; color: var(--text-muted)">
-                <strong>Webhook da Hotmart (para registrar vendas automáticas):</strong><br>
-                Cadastre a URL abaixo no painel de Webhooks da Hotmart (API 2.0 para Compra Aprovada/Completa) para processar vendas em tempo real deste site:
-            </p>
-            <div class="code-box" id="webhook-hotmart-code"></div>
-
-            <p style="font-size: 0.8rem; color: var(--text-muted)">
-                <strong>Webhook da Payt (para registrar vendas automáticas):</strong><br>
-                Cadastre a URL abaixo no painel de Webhooks da Payt (Postback V1 para Venda Aprovada/Finalizada) para processar vendas em tempo real deste site:
-            </p>
-            <div class="code-box" id="webhook-payt-code"></div>
+});</code></pre>
+                    </div>
+                </div>
+            </div>
 
             <div class="modal-actions">
-                <button class="btn btn-primary" onclick="closeScriptModal()">Entendido</button>
+                <button class="btn btn-secondary" onclick="closeScriptModal()">Fechar</button>
             </div>
         </div>
     </div>
@@ -1356,22 +1678,74 @@
         // MOSTRAR SCRIPT DE INTEGRAÇÃO COM COORDENADAS INTEGRADAS
         function showScript(siteId, dominio) {
             const host = window.location.origin;
-            const code = `&lt;!-- MetaAds Integrated Tracking Code for ${escapeHtml(dominio)} --&gt;\n` +
-                         `&lt;script src="${host}/tracker.js" data-site-id="${siteId}" async&gt;&lt;/script&gt;`;
+            const code = `<!-- MetaAds Integrated Tracking Code for ${dominio} -->\n` +
+                         `<script src="${host}/tracker.js" data-site-id="${siteId}" async></script>`;
             
-            document.getElementById('integration-script-code').innerHTML = code;
+            document.getElementById('integration-script-code').textContent = code;
 
             const hotmartUrl = `${host}/api/webhooks/hotmart?site_id=${siteId}`;
             const paytUrl = `${host}/api/webhooks/payt?site_id=${siteId}`;
 
-            document.getElementById('webhook-hotmart-code').innerHTML = hotmartUrl;
-            document.getElementById('webhook-payt-code').innerHTML = paytUrl;
+            document.getElementById('webhook-hotmart-code').textContent = hotmartUrl;
+            document.getElementById('webhook-payt-code').textContent = paytUrl;
+
+            // Reset Tab state to the first tab (Script de Rastreamento)
+            const tabButtons = document.querySelectorAll('.modal-tabs .tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanels.forEach(panel => panel.classList.remove('active'));
+            
+            if (tabButtons[0]) tabButtons[0].classList.add('active');
+            if (tabPanels[0]) tabPanels[0].classList.add('active');
 
             document.getElementById('script-modal').classList.add('active');
         }
 
         function closeScriptModal() {
             document.getElementById('script-modal').classList.remove('active');
+        }
+
+        // CONTROLAR TROCA DE ABAS DO MODAL
+        function switchTab(evt, tabId) {
+            const panels = document.querySelectorAll('.tab-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // COPIAR CÓDIGO DO BLOCO DE INSTRUÇÕES
+        async function copyCode(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            
+            const textToCopy = el.textContent || el.innerText;
+            
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                
+                // Feedback visual do botão
+                const wrapper = el.closest('.code-block-wrapper');
+                const btn = wrapper.querySelector('.btn-copy');
+                const copyText = btn.querySelector('.copy-text') || btn;
+                
+                const originalText = copyText.innerHTML;
+                copyText.innerHTML = 'Copiado!';
+                btn.classList.add('copied');
+                
+                showToast('Copiado para a área de transferência!', 'success');
+                
+                setTimeout(() => {
+                    copyText.innerHTML = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                showToast('Falha ao copiar código.', 'error');
+            }
         }
 
         // Helpers
