@@ -1679,7 +1679,7 @@
         function showScript(siteId, dominio) {
             const host = window.location.origin;
             const code = `<!-- MetaAds Integrated Tracking Code for ${dominio} -->\n` +
-                         `<script src="${host}/tracker.js" data-site-id="${siteId}" async></script>`;
+                         `<script src="${host}/tracker.js" data-site-id="${siteId}" async><\/script>`;
             
             document.getElementById('integration-script-code').textContent = code;
 
